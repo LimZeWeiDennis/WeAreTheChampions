@@ -1,5 +1,40 @@
-.Text-Field {
-    width: 500;
+.Submit {
+    width: 50vh;
+    height: 5vh;
 }
 
-  
+.Buttons {
+    margin: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.Instructions {
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.Text-Field {
+    width: 60vh;
+}
+
+.Team-Text {
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+}
+
+.Registration {
+    width: 100vh;
+    height: 100vh;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
