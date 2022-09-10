@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import './Registration.css';
-// import {fs} from 'fs';
+
+import * as fs from 'fs';
 
 
 const Registration = () => {
     const [inputText, setInputText] = new useState("");
+    const [errorMessage, setErrorMessage] = new useState("");
     const [teamObjects, setTeamObjects] = new useState([]);
     const [hasError, setHasError] = new useState(false);
     const localStorageKey = "team";
 
+    // onChange handler for text field
     const onChangeHandler = (event) => {
         setInputText(event.target.value);
     }
 
+    // useEffect to load localstorage into teamObjects first
     useEffect(() => {
         const items = JSON.parse(localStorage.getItem(localStorageKey));
         if(items){
@@ -22,6 +26,7 @@ const Registration = () => {
         }
     }, [])
     
+    // insert into teamObjects, but first checks if the team is already registered
     const insertTeamObject = (newObject) => {
         // check if the current array contains the team
         for(var i = 0; i < teamObjects.length; i ++){
@@ -58,7 +63,9 @@ const Registration = () => {
             if(groupNumber <= 0 || groupNumber > 2 || isNaN(groupNumber)) {
                 setHasError(true);
                 console.log(groupNumber);
-                throw Error("Input only 1 or 2 for the group number!");
+                setErrorMessage("Input only 1 or 2 for the group number!");
+            } else {
+                setHasError(false);
             }
 
             if(!hasError){
@@ -71,22 +78,16 @@ const Registration = () => {
 
     useEffect(() => {
         const teamObjectsUpdatedNotif = async() => {
-                console.log(teamObjects);
-                const newData = JSON.stringify(teamObjects);
-                await localStorage.setItem(localStorageKey, newData);
+            console.log(teamObjects);
+            const newData = JSON.stringify(teamObjects);
+            await localStorage.setItem(localStorageKey, newData);
         }
         teamObjectsUpdatedNotif();
     }, [teamObjects])
 
+
     const onSubmitHandler = async () => {
         await registerInput(inputText);
-
-        // if(!hasError){
-        //     const newData = JSON.stringify(teamObjects);
-        //     console.log(newData);
-        //     await localStorage.setItem("knn", newData);
-
-        // }
         setInputText("");
     }
 
@@ -118,7 +119,7 @@ const Registration = () => {
 
             {hasError 
                 ?
-                    <p>problem la</p>
+                    <div className="Error-Message">{errorMessage}</div>
                 
                 :
                     <div></div>

@@ -11,15 +11,21 @@
     align-items: center;
 }
 
+.Error-Message {
+    color: red;
+    font-size: larger;
+}
+
 .Instructions {
     display:flex;
     flex-direction:column;
     justify-content: center;
     align-items: flex-start;
+    margin-bottom: 5%;
 }
 
 .Text-Field {
-    width: 60vh;
+    width: 70vh;
 }
 
 .Team-Text {
@@ -31,10 +37,12 @@
 
 .Registration {
     width: 100vh;
-    height: 100vh;
+    height: 80vh;
     display:flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: white;
+    border-radius: 30px;
 }
 
