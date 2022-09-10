@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import './Registration.css';
@@ -9,18 +9,32 @@ const Registration = () => {
     const [inputText, setInputText] = new useState("");
     const [teamObjects, setTeamObjects] = new useState([]);
     const [hasError, setHasError] = new useState(false);
+    const localStorageKey = "team";
 
     const onChangeHandler = (event) => {
         setInputText(event.target.value);
     }
+
+    useEffect(() => {
+        const items = JSON.parse(localStorage.getItem(localStorageKey));
+        if(items){
+            setTeamObjects(items);
+        }
+    }, [])
     
     const insertTeamObject = (newObject) => {
+        // check if the current array contains the team
+        for(var i = 0; i < teamObjects.length; i ++){
+            if(teamObjects[i].teamName === newObject.teamName){
+                return false;
+            }
+        }
         setTeamObjects(prevState => (
             [...prevState, newObject]
         ))
     }
 
-    const registerInput = (input) => {
+    const registerInput = async(input) => {
         const inputArray = input.split("\n");  // split the input string by new space, since string is from input textbox, no need to check if it is string
 
         // example input
@@ -28,8 +42,9 @@ const Registration = () => {
         // teamb 02/12 2
         // teamc 03/12 2
         for(var i = 0; i < inputArray.length; i ++){
-            const currString = inputArray[i].split(" ");
-            // No need to check for teamName, as there should not be any restrictions
+            const currString = inputArray[i].split(" "); // split subsequent string by space
+
+            // No need to check for teamName, as there should not be any restrictions on the name
 
             // Check for currString[1] DateTime
             // try{
@@ -40,30 +55,39 @@ const Registration = () => {
             
             // Check for currString[2] group number( shouldnt have more than 2 groups )
             const groupNumber = parseInt(currString[2]);
-            if(groupNumber <= 0 || groupNumber > 2){
+            if(groupNumber <= 0 || groupNumber > 2 || isNaN(groupNumber)) {
                 setHasError(true);
                 console.log(groupNumber);
-                console.log("Input only 1 or 2 for the group number")
+                throw Error("Input only 1 or 2 for the group number!");
             }
 
             if(!hasError){
-                insertTeamObject({teamName: currString[0], registrationDate: currString[1], groupNumber: currString[2]});
+                await insertTeamObject({teamName: currString[0], registrationDate: currString[1], groupNumber: currString[2]});
             }
 
             //some function to store the team object;
         }
     }
 
+    useEffect(() => {
+        const teamObjectsUpdatedNotif = async() => {
+                console.log(teamObjects);
+                const newData = JSON.stringify(teamObjects);
+                await localStorage.setItem(localStorageKey, newData);
+        }
+        teamObjectsUpdatedNotif();
+    }, [teamObjects])
+
     const onSubmitHandler = async () => {
         await registerInput(inputText);
 
-        if(!hasError){
-            const newData = JSON.stringify(teamObjects);
-            console.log(newData);
-            await localStorage.setItem("knn", newData);
+        // if(!hasError){
+        //     const newData = JSON.stringify(teamObjects);
+        //     console.log(newData);
+        //     await localStorage.setItem("knn", newData);
 
-        }
-        // setInputText("");
+        // }
+        setInputText("");
     }
 
     return (
