@@ -3,9 +3,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import './Registration.css';
 
-import * as fs from 'fs';
-
-
 const Registration = () => {
     const [inputText, setInputText] = new useState("");
     const [errorMessage, setErrorMessage] = new useState("");
