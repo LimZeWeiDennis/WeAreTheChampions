@@ -39,6 +39,10 @@ const Registration = () => {
         ))
     }
 
+    const dateIsValid = (date) => {
+        return date instanceof Date && !isNaN(date);
+    }
+
     const registerInput = async(input) => {
         const inputArray = input.split("\n");  // split the input string by new space, since string is from input textbox, no need to check if it is string
 
@@ -52,11 +56,16 @@ const Registration = () => {
             // No need to check for teamName, as there should not be any restrictions on the name
 
             // Check for currString[1] DateTime
-            // try{
-            //     const dateTime = currString[1].split("/");
-            // } catch (e){
-            //     setHasError(true);
-            // }
+            try{
+                const dateTime = currString[1].split("/");
+                const date = dateTime[0];
+                const month = dateTime[1];
+                const year = "2022";
+                const registrationDate = new Date(year + "-" + month + "-" + date);
+
+            } catch (e){
+                setHasError(true);
+            }
             
             // Check for currString[2] group number( shouldnt have more than 2 groups )
             const groupNumber = parseInt(currString[2]);
