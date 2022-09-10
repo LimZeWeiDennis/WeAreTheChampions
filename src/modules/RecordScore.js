@@ -15,25 +15,40 @@ const RecordScore = () => {
         setInputText(event.target.value);
     }
 
-    const updateCurrGoals = (team, score) => {
+    const updateCurrGoals = (teams, goals) => {
         const updateValue = {...currGoals};
-        updateValue[team] += score;
+        for(var i = 0; i < 2; i ++){
+            if(updateValue[teams[i]] != null){
+                console.log(updateValue[teams[i]]);
+                updateValue[teams[i]] += goals[i];
+            } else {
+                updateValue[teams[i]] = goals[i];
+            }
+        }
+        
         setCurrGoals({
             ...currGoals,
             ...updateValue
         });
     }
 
-    const updateCurrScore = (team, score) => {
+    const updateCurrScore = (teams, scores) => {
         const updateValue = {...currScores};
-        updateValue[team] += score;
+        for(var i = 0; i < teams.length; i ++){
+            if(updateValue[teams[i]] != null){
+                updateValue[teams[i]] += scores[i];
+            } else {
+                updateValue[teams[i]] = scores[i];
+            }
+        }
+        
         setCurrScores({
             ...currScores,
             ...updateValue
         });
     }
 
-    const handleScores = (input) => {
+    const handleScores = async(input) => {
         const scores = input.split("\n");
 
         for(var i = 0; i < scores.length; i ++){
@@ -43,27 +58,31 @@ const RecordScore = () => {
             const firstTeamGoal = parseInt(currGame[2]);
             const secondTeamGoal = parseInt(currGame[3]);
 
-            updateCurrGoals(firstTeam, firstTeamGoal);
-            updateCurrGoals(secondTeam, secondTeamGoal);
+            await updateCurrGoals([firstTeam, secondTeam], [firstTeamGoal, secondTeamGoal]);
 
             if(firstTeamGoal > secondTeamGoal){
-                updateCurrScore(firstTeam, 3);
+                await updateCurrScore([firstTeam], [3]);
             } else if(secondTeamGoal > firstTeamGoal){
-                updateCurrScore(secondTeam, 3);
+                await updateCurrScore([secondTeam], [3]);
             } else {
-                updateCurrScore(firstTeam, 1);
-                updateCurrScore(secondTeam, 1);
+                await updateCurrScore([firstTeam, secondTeam], [1 , 1]);
             }
-
         }
     }
 
+    useEffect(() => {
+        console.log("Current Goals");
+        console.log(currGoals);
+    }, [currGoals]);
+
+    useEffect(() => {
+        console.log("Current Scores");
+        console.log(currScores);
+    }, [currScores]);
+
     const onSubmitHandler = () => {
         handleScores(inputText);
-        console.log(currGoals);
-        console.log(currScores);
     }
-
 
 
     return (
@@ -72,7 +91,7 @@ const RecordScore = () => {
             <div className="Instructions">
                 
                 <p> Please input the scores in the following format: <br/><br/>
-                 First_Team_Name (space) Second_Team_Name (space) First_Team_Goals (space) Second_Team_Goals <br/><br/>
+                 Team1_Name (space) Team2_Name (space) Team1_Goals (space) Team2_Goals <br/><br/>
                  e.g TeamA TeamB 1 2 <br/><br/>
                  Each input can be separated by a new line(i.e Enter) <br/><br/>
                  Please only enter two teams that are in the same group!
@@ -81,7 +100,7 @@ const RecordScore = () => {
  
             <TextField className="Text-Field" 
                        id="outlined-multiline-static" 
-                       label="Teams Date Group Number" 
+                       label="Team1 Team2 Goals1 Goal2" 
                        multiline 
                        minRows={5}
                        maxRows={5} 
