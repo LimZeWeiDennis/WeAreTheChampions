@@ -5,6 +5,7 @@ import Team from "../model/Team.js";
 const insertScore = async (req, res, next) => {
   try {
     const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
+
     let currScore = await Scores.findOne({ teamId: currTeam._id }).exec();
 
     if (currScore !== null) {

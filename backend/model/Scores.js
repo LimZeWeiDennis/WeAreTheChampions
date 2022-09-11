@@ -2,11 +2,7 @@ import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
 
 const scoresSchema = new Schema({
-  teamName: {
-    type: SchemaTypes.ObjectId,
-    ref: "Team",
-    required: true,
-  },
+  teamId: String,
   scores: Number,
 });
 
