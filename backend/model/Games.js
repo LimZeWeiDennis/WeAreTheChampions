@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
-const { Schema, SchemaType, model } = mongoose;
+const { Schema, SchemaTypes, model } = mongoose;
 
 const gamesSchema = new Schema({
   team1Name: {
-    type: SchemaType.ObjectId,
+    type: SchemaTypes.ObjectId,
     ref: "Team",
     required: true,
   },
   team2Name: {
-    type: SchemaType.ObjectId,
+    type: SchemaTypes.ObjectId,
     ref: "Team",
     required: true,
   },

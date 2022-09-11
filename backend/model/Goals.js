@@ -1,12 +1,8 @@
 import mongoose from "mongoose";
-const { Schema, SchemaType, model } = mongoose;
+const { Schema, SchemaTypes, model } = mongoose;
 
 const goalsSchema = new Schema({
-  teamName: {
-    type: SchemaType.ObjectId,
-    ref: "Team",
-    required: true,
-  },
+  teamId: SchemaTypes.ObjectId,
   goals: Number,
 });
 

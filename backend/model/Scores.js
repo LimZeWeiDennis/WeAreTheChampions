@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-const { Schema, SchemaType, model } = mongoose;
+const { Schema, SchemaTypes, model } = mongoose;
 
 const scoresSchema = new Schema({
   teamName: {
-    type: SchemaType.ObjectId,
+    type: SchemaTypes.ObjectId,
     ref: "Team",
     required: true,
   },
