@@ -1,10 +1,23 @@
-import mongoose from "mongoose";
-import Goals from "./model/Goals.js";
-import Team from "./model/Team.js";
-import { getAllGoals, insertGoal } from "./services/GoalsController.js";
-import { insertTeam, getAllTeams } from "./services/TeamController.js";
+import express from "express";
+import cors from "cors";
+import teamRouter from "./services/TeamRoutes.js";
+import init from "./db/db.js";
 
-const url =
-  "mongodb+srv://Cluster74625:fVNSZ1lEbEdW@cluster74625.f2vnm3n.mongodb.net/myFirstDataBase?retryWrites=true&w=majority";
+init();
 
-mongoose.connect(url);
+const app = express();
+const port = 5001;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.use("/api/team", teamRouter);
+
+app.listen(port, () => {
+  console.log(`App has started listening at ${port}`);
+});
