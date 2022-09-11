@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import teamRouter from "./services/TeamRoutes.js";
+import goalsRouter from "./services/GoalsRoutes.js";
 import init from "./db/db.js";
 
 init();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/team", teamRouter);
+app.use("/api/goals", goalsRouter);
 
 app.listen(port, () => {
   console.log(`App has started listening at ${port}`);

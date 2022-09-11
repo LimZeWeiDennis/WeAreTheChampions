@@ -1,25 +1,53 @@
 import Goals from "../model/Goals.js";
 import Team from "../model/Team.js";
 
-const insertGoal = async (team, goal) => {
-  const currTeam = await Team.findOne({ teamName: team }).exec();
-  const currGoal = await Goals.findOne({ teamId: currTeam._id }).exec();
-  console.log(currGoal);
+// API call to insert Goal
+const insertGoal = async (req, res, next) => {
+  try {
+    const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
+    let currGoal = await Goals.findOne({ teamId: currTeam._id }).exec();
 
-  if (currGoal !== null) {
-    currGoal.goals += goal;
-    await currGoal.save();
-    console.log(currGoal);
-  } else {
-    const goalTemp = await Goals.create({ teamId: currTeam._id, goals: goal });
-    console.log(goalTemp);
+    if (currGoal !== null) {
+      currGoal.goals += req.body.goals;
+      await currGoal.save();
+    } else {
+      currGoal = await Goals.create({
+        teamId: currTeam._id,
+        goals: req.body.goals,
+      });
+      console.log(currGoal);
+    }
+    res.status(200).json({
+      data: currGoal,
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
   }
 };
 
-const getAllGoals = async () => {
-  const goals = await Goals.find();
-  console.log("Getting all goals");
-  console.log(goals);
+// API call to get all the goals
+const getAllGoals = async (req, res, next) => {
+  try {
+    const goals = await Goals.find();
+    res.status(200).json({
+      data: goals,
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
+  }
 };
 
-export { insertGoal, getAllGoals };
+const deleteAllGoals = async (req, res, next) => {
+  try {
+    await Goals.remove({});
+    res.status(200).json({
+      data: "Deleted All teams goals!",
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
+  }
+};
+export { insertGoal, getAllGoals, deleteAllGoals };
