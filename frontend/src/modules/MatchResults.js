@@ -4,15 +4,17 @@ import Button from "@mui/material/Button";
 
 import "./Registration.css";
 import { getAllTeams } from "../logic/RegistrationAPI";
-import { getAllGoals } from "../logic/GoalsAPI.js";
-import { getAllScores } from "../logic/ScoresAPI.js";
-import { getAllAltScores } from "../logic/AltScoresAPI.js";
+import { getAllGoals, getTeamGoals } from "../logic/GoalsAPI.js";
+import { getAllScores, getTeamScores } from "../logic/ScoresAPI.js";
+import { getAllAltScores, getTeamAltScores } from "../logic/AltScoresAPI.js";
 
 const MatchResults = () => {
   const [teams, setTeams] = useState([]);
   const [goals, setGoals] = useState([]);
   const [scores, setScores] = useState([]);
   const [altScores, setAltScores] = useState([]);
+  const [fullTeamInfo, setFullTeamInfo] = useState([]);
+  const [loadedTeams, setLoadedTeams] = useState(false);
 
   // useEffect to load all the required inputs
   useEffect(() => {
@@ -41,17 +43,54 @@ const MatchResults = () => {
       const data = await getAllAltScores();
       if (data.data.data) {
         setAltScores(data.data.data);
+        setLoadedTeams(true);
       }
     };
-
     loadAllTeams();
     loadAllGoals();
     loadAllScores();
     loadAllAltScores();
   }, []);
 
+  useEffect(() => {
+    const loadFullTeamInfo = async () => {
+      const tempArray = [];
+      for (let i = 0; i < teams.length; i++) {
+        let tempTeamObject = {
+          teamName: teams[i].teamName,
+          registrationDate: teams[i].registrationDate,
+          groupNumber: teams[i].groupNumber,
+        };
+
+        const altScore = altScores.find(
+          (element) => (element.teamName = teams[i].teamName)
+        );
+        const goal = goals.find(
+          (element) => (element.teamName = teams[i].teamName)
+        );
+        const score = scores.find(
+          (element) => (element.teamName = teams[i].teamName)
+        );
+
+        tempTeamObject.altScores = altScore.scores;
+        tempTeamObject.goals = goal.goals;
+        tempTeamObject.scores = score.scores;
+
+        tempArray.push(tempTeamObject);
+      }
+      setFullTeamInfo(tempArray);
+    };
+
+    loadFullTeamInfo();
+  }, [loadedTeams]);
+
+  const loadTeamAltScore = async () => {
+    console.log(fullTeamInfo);
+  };
+
   // on submit handler for submit button
   const onSubmitHandler = async () => {
+    loadTeamAltScore();
     // To create delete API calls for teams, goals, scores and altscores
   };
 
@@ -79,7 +118,7 @@ const MatchResults = () => {
       <div className="Buttons">
         <Button
           className="Submit"
-          disabled={teams.length === 12}
+          disabled={teams.length !== 12}
           variant="contained"
           onClick={onSubmitHandler}
         >
