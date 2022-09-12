@@ -7,11 +7,12 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
 import Registration from "./modules/Registration";
-import soccerBG from "./assets/soccer.png";
 import RecordScore from "./modules/RecordScore";
+import MatchResults from "./modules/MatchResults.js";
+import soccerBG from "./assets/soccer.png";
 
 function App() {
-  const [value, setValue] = new useState("2");
+  const [value, setValue] = new useState("1");
   const [hasTwelveTeams, setHasTwelveTeams] = new useState(true);
 
   const handleChange = (event, newValue) => {
@@ -52,7 +53,7 @@ function App() {
             <RecordScore />
           </TabPanel>
           <TabPanel value="3">
-            <div />
+            <MatchResults />
           </TabPanel>
         </TabContext>
       </Box>
