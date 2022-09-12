@@ -7,6 +7,7 @@ import "./Registration.css";
 import { getAllTeams } from "../logic/RegistrationAPI";
 import { insertGoal } from "../logic/GoalsAPI.js";
 import { insertScore } from "../logic/ScoresAPI.js";
+import { insertAltScore } from "../logic/AltScoresAPI.js";
 
 const RecordScore = () => {
   const [inputText, setInputText] = useState("");
@@ -38,18 +39,35 @@ const RecordScore = () => {
     }
   };
 
+  // to handle logic and input scores and altScores into database
   const inputScores = async (team1, team2, goals1, goals2) => {
     if (goals1 > goals2) {
       const newScoreObject = { teamName: team1, scores: 3 };
+      const newAltScoreObject = { teamName: team1, scores: 5 };
+      const newAltScoreObject2 = { teamName: team2, scores: 1 };
+
       await insertScore(newScoreObject);
+      await insertAltScore(newAltScoreObject);
+      await insertAltScore(newAltScoreObject2);
     } else if (goals2 > goals1) {
       const newScoreObject = { teamName: team2, scores: 3 };
+      const newAltScoreObject = { teamName: team2, scores: 5 };
+      const newAltScoreObject2 = { teamName: team1, scores: 1 };
+
       await insertScore(newScoreObject);
+      await insertAltScore(newAltScoreObject);
+      await insertAltScore(newAltScoreObject2);
     } else {
       const newScoreObject = { teamName: team1, scores: 1 };
       const newScoreObject2 = { teamName: team2, scores: 1 };
+
+      const newAltScoreObject = { teamName: team1, scores: 3 };
+      const newAltScoreObject2 = { teamName: team2, scores: 3 };
+
       await insertScore(newScoreObject);
       await insertScore(newScoreObject2);
+      await insertAltScore(newAltScoreObject);
+      await insertAltScore(newAltScoreObject2);
     }
   };
 
