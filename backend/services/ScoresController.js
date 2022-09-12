@@ -27,6 +27,20 @@ const insertScore = async (req, res, next) => {
   }
 };
 
+// API to get one team's score
+const getTeamScore = async (req, res, next) => {
+  try {
+    const team = await Team.findOne({ teamName: req.body.teamName }).exec();
+    const teamScores = await Scores.findOne({ teamId: currTeam._id }).exec();
+    res.status(200).json({
+      data: teamScores,
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
+  }
+};
+
 // API call to get all the scores
 const getAllScores = async (req, res, next) => {
   try {
@@ -51,4 +65,4 @@ const deleteAllScores = async (req, res, next) => {
     next(e);
   }
 };
-export { insertScore, getAllScores, deleteAllScores };
+export { insertScore, getAllScores, getTeamScore, deleteAllScores };
