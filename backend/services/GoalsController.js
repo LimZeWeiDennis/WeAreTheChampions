@@ -26,6 +26,20 @@ const insertGoal = async (req, res, next) => {
   }
 };
 
+//API call to get single goals query
+const getTeamGoals = async (req, res, next) => {
+  try {
+    const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
+    const teamGoals = await Goals.findOne({ teamId: currTeam._id }).exec();
+    res.status(200).json({
+      data: teamGoals,
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
+  }
+};
+
 // API call to get all the goals
 const getAllGoals = async (req, res, next) => {
   try {
@@ -50,4 +64,4 @@ const deleteAllGoals = async (req, res, next) => {
     next(e);
   }
 };
-export { insertGoal, getAllGoals, deleteAllGoals };
+export { insertGoal, getAllGoals, getTeamGoals, deleteAllGoals };
