@@ -4,39 +4,38 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 import "./Registration.css";
+import { getAllTeams } from "../logic/RegistrationAPI";
+import { insertGoal } from "../logic/GoalsAPI.js";
 
 const RecordScore = () => {
   const [inputText, setInputText] = useState("");
   const [teamNames, setTeamNames] = useState(new Set());
+  const [errorMessage, setErrorMessage] = useState("");
   const [hasError, setHasError] = useState(false);
-  const [currGoals, setCurrGoals] = useState({});
   const [currScores, setCurrScores] = useState({});
-
-  const localStorageGoals = "goals";
   const localStorageScores = "scores";
-  const localStorageKey = "team";
 
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem(localStorageKey));
-    if (items) {
-      setTeamNames(new Set(items.map((item) => item.teamName)));
-    }
+    const loadAllTeams = async () => {
+      const data = await getAllTeams();
+      if (data.data.data) {
+        setTeamNames(new Set(data.data.data.map((team) => team.teamName)));
+      }
+    };
+
+    loadAllTeams();
   }, []);
 
   const onChangeHandler = (event) => {
     setInputText(event.target.value);
   };
 
-  const inputGoals = (teams, goals, goalsObject) => {
+  // To input goals into database;
+  const inputGoals = (teams, goalList) => {
     for (let i = 0; i < teams.length; i++) {
-      if (goalsObject[teams[i]] != null) {
-        goalsObject[teams[i]] += goals[i];
-      } else {
-        goalsObject[teams[i]] = goals[i];
-      }
+      const newGoalObject = { teamName: teams[i], goals: goalList[i] };
+      insertGoal(newGoalObject);
     }
-
-    return goalsObject;
   };
 
   const inputScores = (team1, team2, goals1, goals2, scoresObject) => {
@@ -74,8 +73,8 @@ const RecordScore = () => {
 
   const handleScores = (input) => {
     const scores = input.split("\n");
-    let goalsObject = { ...currGoals };
     let scoresObject = { ...currScores };
+    let isError = false;
 
     for (let i = 0; i < scores.length; i++) {
       const currGame = scores[i].split(" ");
@@ -84,31 +83,27 @@ const RecordScore = () => {
       const firstTeamGoal = parseInt(currGame[2]);
       const secondTeamGoal = parseInt(currGame[3]);
 
-      goalsObject = inputGoals(
-        [firstTeam, secondTeam],
-        [firstTeamGoal, secondTeamGoal],
-        goalsObject
-      );
+      if (!teamNames.has(firstTeam) || !teamNames.has(secondTeam)) {
+        isError = true;
+        setErrorMessage("Input only registered teams!!");
+      }
 
-      scoresObject = inputScores(
-        firstTeam,
-        secondTeam,
-        firstTeamGoal,
-        secondTeamGoal,
-        scoresObject
-      );
+      if (!isError) {
+        inputGoals([firstTeam, secondTeam], [firstTeamGoal, secondTeamGoal]);
+
+        scoresObject = inputScores(
+          firstTeam,
+          secondTeam,
+          firstTeamGoal,
+          secondTeamGoal,
+          scoresObject
+        );
+      }
     }
-
-    const newGoals = { ...currGoals, ...goalsObject };
-    setCurrGoals(newGoals);
-
+    setHasError(isError);
     const newScores = { ...currScores, ...scoresObject };
     setCurrScores(newScores);
-
-    const newGoalsData = JSON.stringify(newGoals);
     const newScoresData = JSON.stringify(newScores);
-
-    localStorage.setItem(localStorageGoals, newGoalsData);
     localStorage.setItem(localStorageScores, newScoresData);
   };
 
@@ -158,7 +153,7 @@ const RecordScore = () => {
         </Button>
       </div>
 
-      {hasError ? <p>problem la</p> : <div></div>}
+      {hasError ? <p>{errorMessage}</p> : <div></div>}
     </div>
   );
 };
