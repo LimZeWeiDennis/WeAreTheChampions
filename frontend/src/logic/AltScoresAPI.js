@@ -23,3 +23,15 @@ export const insertAltScore = async (altScoresObject) => {
     console.error(e);
   }
 };
+
+const getTeamAltScoresUri = `${altScoresUri}/getAltScores`;
+
+export const getTeamAltScores = async (teamNameObject) => {
+  try {
+    let data = await axios.post(getTeamAltScoresUri, teamNameObject);
+    data = handleResponse(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
