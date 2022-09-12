@@ -2,16 +2,8 @@ import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
 
 const gamesSchema = new Schema({
-  team1Name: {
-    type: SchemaTypes.ObjectId,
-    ref: "Team",
-    required: true,
-  },
-  team2Name: {
-    type: SchemaTypes.ObjectId,
-    ref: "Team",
-    required: true,
-  },
+  team1Name: SchemaTypes.ObjectId,
+  team2Name: SchemaTypes.ObjectId,
   team1Goals: Number,
   team2Goals: Number,
 });

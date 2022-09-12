@@ -6,6 +6,6 @@ const alternativeScoreSchema = new Schema({
   scores: Number,
 });
 
-const AltScores = model("Scores", alternativeScoreSchema);
+const AltScores = model("AltScores", alternativeScoreSchema);
 
 export default AltScores;
