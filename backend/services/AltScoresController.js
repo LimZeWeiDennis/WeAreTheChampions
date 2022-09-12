@@ -27,6 +27,20 @@ const insertAltScore = async (req, res, next) => {
   }
 };
 
+// API call to get single query one alt scores
+const getTeamAltScores = async (req, res, next) => {
+  try {
+    const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
+    const currScore = await AltScores.findOne({ teamId: currTeam._id }).exec();
+    res.status(200).json({
+      data: currScore,
+    });
+  } catch (e) {
+    res.status(400);
+    next(e);
+  }
+};
+
 // API call to get all the scores
 const getAllAltScores = async (req, res, next) => {
   try {
@@ -51,4 +65,9 @@ const deleteAllAltScores = async (req, res, next) => {
     next(e);
   }
 };
-export { insertAltScore, getAllAltScores, deleteAllAltScores };
+export {
+  insertAltScore,
+  getAllAltScores,
+  getTeamAltScores,
+  deleteAllAltScores,
+};

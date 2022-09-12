@@ -2,13 +2,15 @@ import express from "express";
 import {
   insertAltScore,
   getAllAltScores,
+  getTeamAltScores,
   deleteAllAltScores,
-} from "./ScoresController.js";
+} from "./AltScoresController.js";
 
-const scoresRouter = express.Router();
+const altScoreRouter = express.Router();
 
-scoresRouter.route("/").get(getAllAltScores).post(insertAltScore);
+altScoreRouter.route("/").get(getAllAltScores).post(insertAltScore);
 
-scoresRouter.route("/delete").post(deleteAllAltScores);
+altScoreRouter.route("/delete").post(deleteAllAltScores);
+altScoreRouter.route("/getAltScores").post(getTeamAltScores);
 
-export default scoresRouter;
+export default altScoreRouter;
