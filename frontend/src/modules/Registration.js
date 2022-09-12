@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import { isExists } from "date-fns";
 
 import "./Registration.css";
+import { getAllTeams, registerTeam } from "../logic/RegistrationAPI";
 
 const Registration = () => {
   const [inputText, setInputText] = useState("");
@@ -20,16 +21,20 @@ const Registration = () => {
 
   // useEffect to load localstorage into teamObjects first
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem(localStorageKey));
-    if (items) {
-      setTeamObjects(items);
-    }
+    const loadAllTeams = async () => {
+      const data = await getAllTeams();
+      if (data.data) {
+        setTeamObjects(data.data.data);
+      }
+    };
+    loadAllTeams();
   }, []);
 
+  // method to register teams in the current text input
   const registerInput = (input) => {
     const inputArray = input.split("\n"); // split the input string by new space, since string is from input textbox, no need to check if it is string
     const teamsArray = [];
-    let teamNames = new Set(
+    let teamNames = new Set( // Set to storet he current set of teamNames, to check for duplicates
       teamObjects.map((teamObject) => teamObject.teamName)
     );
     let isErrorInput = false;
@@ -40,7 +45,11 @@ const Registration = () => {
     for (let i = 0; i < inputArray.length; i++) {
       const currString = inputArray[i].split(" "); // split subsequent string by space
 
-      // No need to check for teamName, as there should not be any restrictions on the name
+      // Check if teamName already exists
+      if (teamNames.has(currString[0])) {
+        isErrorInput = true;
+        setErrorMessage("Current Team has already been registered!");
+      }
 
       // Check for currString[1] DateTime
 
@@ -48,8 +57,6 @@ const Registration = () => {
       const date = parseInt(dateTime[0]);
       const month = parseInt(dateTime[1]);
       const year = 2022;
-
-      console.log(year + "-" + month + "-" + date);
 
       if (!isExists(year, month - 1, date)) {
         isErrorInput = true;
@@ -66,12 +73,14 @@ const Registration = () => {
         setErrorMessage("Input only 1 or 2 for the group number!");
       }
 
-      if (!isErrorInput && !teamNames.has(currString[0])) {
-        teamsArray.push({
+      if (!isErrorInput) {
+        const newTeamObject = {
           teamName: currString[0],
           registrationDate: registrationDate,
           groupNumber: groupNumber,
-        });
+        };
+        teamsArray.push(newTeamObject);
+        registerTeam(newTeamObject);
       }
 
       //some function to store the team object;
@@ -79,20 +88,9 @@ const Registration = () => {
     setHasError(isErrorInput);
     const newTeamObjects = [...teamObjects, ...teamsArray];
     setTeamObjects(newTeamObjects);
-
-    const newData = JSON.stringify(newTeamObjects);
-    localStorage.setItem(localStorageKey, newData);
   };
 
-  // useEffect(() => {
-  //     const teamObjectsUpdatedNotif = async() => {
-  //         console.log(teamObjects);
-  //         const newData = JSON.stringify(teamObjects);
-  //         await localStorage.setItem(localStorageKey, newData);
-  //     }
-  //     teamObjectsUpdatedNotif();
-  // }, [teamObjects])
-
+  // submit handler for the submit button
   const onSubmitHandler = () => {
     registerInput(inputText);
     setInputText("");
@@ -120,6 +118,7 @@ const Registration = () => {
         label="Teams Date Group Number"
         multiline
         minRows={5}
+        maxRows={10}
         value={inputText}
         onChange={onChangeHandler}
         variant="outlined"
@@ -136,8 +135,7 @@ const Registration = () => {
           variant="contained"
           onClick={onSubmitHandler}
         >
-          {" "}
-          Submit{" "}
+          Submit
         </Button>
       </div>
     </div>
