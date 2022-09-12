@@ -6,14 +6,13 @@ import Button from "@mui/material/Button";
 import "./Registration.css";
 import { getAllTeams } from "../logic/RegistrationAPI";
 import { insertGoal } from "../logic/GoalsAPI.js";
+import { insertScore } from "../logic/ScoresAPI.js";
 
 const RecordScore = () => {
   const [inputText, setInputText] = useState("");
   const [teamNames, setTeamNames] = useState(new Set());
   const [errorMessage, setErrorMessage] = useState("");
   const [hasError, setHasError] = useState(false);
-  const [currScores, setCurrScores] = useState({});
-  const localStorageScores = "scores";
 
   useEffect(() => {
     const loadAllTeams = async () => {
@@ -26,54 +25,37 @@ const RecordScore = () => {
     loadAllTeams();
   }, []);
 
+  // on change handler for text field
   const onChangeHandler = (event) => {
     setInputText(event.target.value);
   };
 
   // To input goals into database;
-  const inputGoals = (teams, goalList) => {
+  const inputGoals = async (teams, goalList) => {
     for (let i = 0; i < teams.length; i++) {
       const newGoalObject = { teamName: teams[i], goals: goalList[i] };
-      insertGoal(newGoalObject);
+      await insertGoal(newGoalObject);
     }
   };
 
-  const inputScores = (team1, team2, goals1, goals2, scoresObject) => {
-    console.log(team1, team2, goals1, goals2);
+  const inputScores = async (team1, team2, goals1, goals2) => {
     if (goals1 > goals2) {
-      if (scoresObject[team1] != null) {
-        scoresObject[team1] += 3;
-      } else {
-        scoresObject[team1] = 3;
-      }
+      const newScoreObject = { teamName: team1, scores: 3 };
+      await insertScore(newScoreObject);
     } else if (goals2 > goals1) {
-      if (scoresObject[team2] != null) {
-        scoresObject[team2] += 3;
-      } else {
-        scoresObject[team2] = 3;
-      }
+      const newScoreObject = { teamName: team2, scores: 3 };
+      await insertScore(newScoreObject);
     } else {
-      console.log(team1, team2);
-      console.log(scoresObject[team1]);
-      if (scoresObject[team1] != null) {
-        scoresObject[team1] += 1;
-      } else {
-        scoresObject[team1] = 1;
-      }
-
-      if (scoresObject[team2] != null) {
-        scoresObject[team2] += 1;
-      } else {
-        scoresObject[team2] = 1;
-      }
+      const newScoreObject = { teamName: team1, scores: 1 };
+      const newScoreObject2 = { teamName: team2, scores: 1 };
+      await insertScore(newScoreObject);
+      await insertScore(newScoreObject2);
     }
-
-    return scoresObject;
   };
 
-  const handleScores = (input) => {
+  // function to handle the input of goals, scores and alt scores into the database
+  const handleScores = async (input) => {
     const scores = input.split("\n");
-    let scoresObject = { ...currScores };
     let isError = false;
 
     for (let i = 0; i < scores.length; i++) {
@@ -89,26 +71,20 @@ const RecordScore = () => {
       }
 
       if (!isError) {
-        inputGoals([firstTeam, secondTeam], [firstTeamGoal, secondTeamGoal]);
-
-        scoresObject = inputScores(
-          firstTeam,
-          secondTeam,
-          firstTeamGoal,
-          secondTeamGoal,
-          scoresObject
+        await inputGoals(
+          [firstTeam, secondTeam],
+          [firstTeamGoal, secondTeamGoal]
         );
+        await inputScores(firstTeam, secondTeam, firstTeamGoal, secondTeamGoal);
       }
     }
     setHasError(isError);
-    const newScores = { ...currScores, ...scoresObject };
-    setCurrScores(newScores);
-    const newScoresData = JSON.stringify(newScores);
-    localStorage.setItem(localStorageScores, newScoresData);
   };
 
+  // on submit handler for submit button
   const onSubmitHandler = () => {
     handleScores(inputText);
+    setInputText("");
   };
 
   return (
@@ -142,6 +118,12 @@ const RecordScore = () => {
         variant="outlined"
       />
 
+      {hasError ? (
+        <div className="Error-Message">{errorMessage}</div>
+      ) : (
+        <div></div>
+      )}
+
       <div className="Buttons">
         <Button
           className="Submit"
@@ -152,8 +134,6 @@ const RecordScore = () => {
           Submit{" "}
         </Button>
       </div>
-
-      {hasError ? <p>{errorMessage}</p> : <div></div>}
     </div>
   );
 };
