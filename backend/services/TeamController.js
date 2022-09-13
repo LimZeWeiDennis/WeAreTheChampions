@@ -1,13 +1,9 @@
 import Team from "../model/Team.js";
 
-// API call to register team
+// API call to register teams
 const insertTeam = async (req, res, next) => {
   try {
-    const team = await Team.create({
-      teamName: req.body.teamName,
-      registrationDate: req.body.registrationDate,
-      groupNumber: req.body.groupNumber,
-    });
+    const team = await Team.create(req.body);
     res.status(200).json({
       data: team,
     });
