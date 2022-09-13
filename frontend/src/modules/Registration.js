@@ -31,6 +31,7 @@ const Registration = () => {
 
   // method to register teams in the current text input
   const registerInput = async (input) => {
+    input = input.trim();
     const inputArray = input.split("\n"); // split the input string by new space, since string is from input textbox, no need to check if it is string
     const teamsArray = [];
     let teamNames = new Set( // Set to storet he current set of teamNames, to check for duplicates
@@ -51,11 +52,19 @@ const Registration = () => {
       }
 
       // Check for currString[1] DateTime
+      let date = 31;
+      let month = 2;
+      let year = 2022;
 
-      const dateTime = currString[1].split("/");
-      const date = parseInt(dateTime[0]);
-      const month = parseInt(dateTime[1]);
-      const year = 2022;
+      try {
+        const dateTime = currString[1].split("/");
+        date = parseInt(dateTime[0]);
+        month = parseInt(dateTime[1]);
+        year = 2022;
+      } catch (e) {
+        isErrorInput = true;
+        setErrorMessage("Please follow the input format!");
+      }
 
       if (!isExists(year, month - 1, date)) {
         isErrorInput = true;
