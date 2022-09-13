@@ -4,22 +4,28 @@ import Team from "../model/Team.js";
 // API call to insert Score
 const insertScore = async (req, res, next) => {
   try {
-    const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
+    const content = req.body;
+    const results = [];
+    for (let i = 0; i < req.body.length; i++) {
+      const currTeam = await Team.findOne({
+        teamName: content[i].teamName,
+      }).exec();
 
-    let currScore = await Scores.findOne({ teamId: currTeam._id }).exec();
+      let currScore = await Scores.findOne({ teamId: currTeam._id }).exec();
 
-    if (currScore !== null) {
-      currScore.scores += req.body.scores;
-      await currScore.save();
-    } else {
-      currScore = await Scores.create({
-        teamId: currTeam._id,
-        scores: req.body.scores,
-      });
-      console.log(currScore);
+      if (currScore !== null) {
+        currScore.scores += content[i].scores;
+        await currScore.save();
+      } else {
+        currScore = await Scores.create({
+          teamId: currTeam._id,
+          scores: content[i].scores,
+        });
+      }
+      results.push(currScore);
     }
     res.status(200).json({
-      data: currScore,
+      data: results,
     });
   } catch (e) {
     res.status(400);
