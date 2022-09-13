@@ -4,21 +4,27 @@ import Team from "../model/Team.js";
 // API call to insert Goal
 const insertGoal = async (req, res, next) => {
   try {
-    const currTeam = await Team.findOne({ teamName: req.body.teamName }).exec();
-    let currGoal = await Goals.findOne({ teamId: currTeam._id }).exec();
+    const content = req.body;
+    const results = [];
+    for (let i = 0; i < content.length; i++) {
+      const currTeam = await Team.findOne({
+        teamName: content[i].teamName,
+      }).exec();
+      let currGoal = await Goals.findOne({ teamId: currTeam._id }).exec();
 
-    if (currGoal !== null) {
-      currGoal.goals += req.body.goals;
-      await currGoal.save();
-    } else {
-      currGoal = await Goals.create({
-        teamId: currTeam._id,
-        goals: req.body.goals,
-      });
-      console.log(currGoal);
+      if (currGoal !== null) {
+        currGoal.goals += content[i].goals;
+        await currGoal.save();
+      } else {
+        currGoal = await Goals.create({
+          teamId: currTeam._id,
+          goals: content[i].goals,
+        });
+      }
+      results.push(currGoal);
     }
     res.status(200).json({
-      data: currGoal,
+      data: results,
     });
   } catch (e) {
     res.status(400);
