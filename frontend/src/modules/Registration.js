@@ -6,7 +6,6 @@ import { isExists } from "date-fns";
 
 import "./Registration.css";
 import { getAllTeams, registerTeam } from "../logic/RegistrationAPI";
-import { insertScore } from "../logic/ScoresAPI";
 
 const Registration = () => {
   const [inputText, setInputText] = useState("");
@@ -38,7 +37,6 @@ const Registration = () => {
     const inputArray = input.split("\n"); // split the input string by new space, since string is from input textbox, no need to check if it is string
 
     const teamsArray = [];
-    const scoresArray = [];
 
     let teamNames = new Set( // Set to storet he current set of teamNames, to check for duplicates
       teamObjects.map((teamObject) => teamObject.teamName)
@@ -100,13 +98,11 @@ const Registration = () => {
           scores: 0,
         };
         teamsArray.push(newTeamObject);
-        scoresArray.push(newScoreObject); // this is to ensure that every team has a score in the end;
       }
     }
     setHasError(isErrorInput);
     if (!isErrorInput) {
       await registerTeam(teamsArray);
-      await insertScore(scoresArray);
       const newTeamObjects = [...teamObjects, ...teamsArray];
       setTeamObjects(newTeamObjects);
     }
