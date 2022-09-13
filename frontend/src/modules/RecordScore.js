@@ -6,13 +6,16 @@ import { CircularProgress } from "@mui/material";
 
 import "./Registration.css";
 import { getAllTeams } from "../logic/RegistrationAPI";
-import { insertGoal } from "../logic/GoalsAPI.js";
-import { insertScore } from "../logic/ScoresAPI.js";
-import { insertAltScore } from "../logic/AltScoresAPI.js";
+import { getAllGoals, insertGoal } from "../logic/GoalsAPI.js";
+import { getAllScores, insertScore } from "../logic/ScoresAPI.js";
+import { getAllAltScores, insertAltScore } from "../logic/AltScoresAPI.js";
 
 const RecordScore = () => {
   const [inputText, setInputText] = useState("");
   const [teamNames, setTeamNames] = useState(new Set());
+  const [allGoals, setAllGoals] = useState([]);
+  const [allScores, setAllScores] = useState([]);
+  const [allAltScores, setAllAltScores] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +25,18 @@ const RecordScore = () => {
       const data = await getAllTeams();
       if (data) {
         setTeamNames(new Set(data.data.data.map((team) => team.teamName)));
+      }
+      const goalData = await getAllGoals();
+      if (goalData) {
+        setAllGoals(goalData.data.data);
+      }
+      const scoresData = await getAllScores();
+      if (scoresData) {
+        setAllScores(scoresData.data.data);
+      }
+      const altScoresData = await getAllAltScores();
+      if (altScoresData) {
+        setAllAltScores(altScoresData.data.data);
       }
     };
 
@@ -130,9 +145,9 @@ const RecordScore = () => {
     setIsLoading(true);
     const scores = input.split("\n");
 
-    let goalsArray = [];
-    let scoresArray = [];
-    let altScoresArray = [];
+    let goalsArray = allGoals;
+    let scoresArray = allScores;
+    let altScoresArray = allAltScores;
 
     let isError = false;
 

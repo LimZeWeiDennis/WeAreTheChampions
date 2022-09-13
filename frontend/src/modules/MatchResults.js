@@ -72,18 +72,19 @@ const MatchResults = () => {
       };
 
       const altScore = altScores.filter((obj) => {
-        return obj.teamId === teams[i]._id;
+        return obj.teamName === teams[i].teamName;
       });
 
       const goal = goals.filter((obj) => {
-        return obj.teamId === teams[i]._id;
+        return obj.teamName === teams[i].teamName;
       });
 
       const score = scores.filter((obj) => {
-        return obj.teamId === teams[i]._id;
+        return obj.teamName === teams[i].teamName;
       });
 
       try {
+        console.log(tempTeamObject);
         tempTeamObject.altScores = altScore[0].scores;
         tempTeamObject.goals = goal[0].goals;
         tempTeamObject.scores = score[0].scores;
