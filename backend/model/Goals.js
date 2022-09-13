@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
 
 const goalsSchema = new Schema({
-  teamId: SchemaTypes.ObjectId,
+  teamName: String,
   goals: Number,
 });
 
