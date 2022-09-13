@@ -35,3 +35,15 @@ export const getTeamGoals = async (teamNameObject) => {
     console.error(e);
   }
 };
+
+const deleteTeamGoalsUri = `${goalsUri}/delete`;
+
+export const deleteAllTeamGoals = async () => {
+  try {
+    let data = await axios.post(deleteTeamGoalsUri);
+    data = handleResponse(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
