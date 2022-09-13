@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const scoresSchema = new Schema({
-  teamId: String,
+  teamName: String,
   scores: Number,
 });
 

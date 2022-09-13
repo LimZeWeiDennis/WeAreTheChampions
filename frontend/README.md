@@ -5,6 +5,7 @@
 - There will only be 12 teams participating in the Matches
 - Inputs will ensure that there will be 6 teams per group
 - Inputs will ensure that only teams of the same group will be matched together
+- There will only be one instance of this web app running
 
 ## Frontend setup
 

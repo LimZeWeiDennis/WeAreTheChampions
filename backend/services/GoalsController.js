@@ -7,20 +7,14 @@ const insertGoal = async (req, res, next) => {
     const content = req.body;
     const results = [];
     for (let i = 0; i < content.length; i++) {
-      const currTeam = await Team.findOne({
-        teamName: content[i].teamName,
-      }).exec();
-      let currGoal = await Goals.findOne({ teamId: currTeam._id }).exec();
+      const query = { teamName: content[i].teamName };
+      const update = { goals: content[i].goals };
 
-      if (currGoal !== null) {
-        currGoal.goals += content[i].goals;
-        await currGoal.save();
-      } else {
-        currGoal = await Goals.create({
-          teamId: currTeam._id,
-          goals: content[i].goals,
-        });
-      }
+      const currGoal = await Goals.findOneAndUpdate(query, update, {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+      });
       results.push(currGoal);
     }
     res.status(200).json({
