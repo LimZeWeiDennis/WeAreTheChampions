@@ -6,6 +6,7 @@ import { isExists } from "date-fns";
 
 import "./Registration.css";
 import { getAllTeams, registerTeam } from "../logic/RegistrationAPI";
+import { insertScore } from "../logic/ScoresAPI";
 
 const Registration = () => {
   const [inputText, setInputText] = useState("");
@@ -87,8 +88,14 @@ const Registration = () => {
           registrationDate: registrationDate,
           groupNumber: groupNumber,
         };
+
+        const newScoreObject = {
+          teamName: currString[0],
+          scores: 0,
+        };
         teamsArray.push(newTeamObject);
         await registerTeam(newTeamObject);
+        await insertScore(newScoreObject); // this is to ensure that every team has a score in the end;
       }
 
       //some function to store the team object;
