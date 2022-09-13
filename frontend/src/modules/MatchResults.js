@@ -14,10 +14,10 @@ const MatchResults = () => {
   const [goals, setGoals] = useState([]);
   const [scores, setScores] = useState([]);
   const [altScores, setAltScores] = useState([]);
-  const [fullTeamInfo, setFullTeamInfo] = useState([]);
-  const [loadedTeams, setLoadedTeams] = useState(false);
-  const [groupOneRanking, setGroupOneRanking] = useState([]);
-  const [groupTwoRanking, setGroupTwoRanking] = useState([]);
+  const [groupOneQualified, setGroupOneQualified] = useState([]);
+  const [groupOneNotQualified, setGroupOneNotQualified] = useState([]);
+  const [groupTwoQualified, setGroupTwoQualified] = useState([]);
+  const [groupTwoNotQualified, setGroupTwoNotQualified] = useState([]);
 
   // useEffect to load all the required inputs
   useEffect(() => {
@@ -46,7 +46,6 @@ const MatchResults = () => {
       const data = await getAllAltScores();
       if (data.data.data) {
         setAltScores(data.data.data);
-        setLoadedTeams(true);
       }
     };
     loadAllTeams();
@@ -82,7 +81,6 @@ const MatchResults = () => {
 
       tempArray.push(tempTeamObject);
     }
-    setFullTeamInfo(tempArray);
     generateRanking(tempArray);
   };
 
@@ -102,7 +100,8 @@ const MatchResults = () => {
 
   // Function to generate the ranking of the qualifying round
   const generateRanking = (tempArray) => {
-    const groupOne = [];
+    const groupOnePassed = [];
+    const groupOneFailed = [];
     const pq1 = new PriorityQueue(teamComparator);
     for (let i = 0; i < tempArray.length; i++) {
       if (tempArray[i].groupNumber === 1) {
@@ -110,24 +109,34 @@ const MatchResults = () => {
       }
     }
 
+    for (let i = 0; i < 4; i++) {
+      groupOnePassed.push(pq1.pop());
+    }
     while (!pq1.isEmpty()) {
-      groupOne.push(pq1.pop());
+      groupOneFailed.push(pq1.pop());
     }
 
-    const groupTwo = [];
+    const groupTwoPassed = [];
+    const groupTwoFailed = [];
     const pq2 = new PriorityQueue(teamComparator);
     for (let i = 0; i < tempArray.length; i++) {
       if (tempArray[i].groupNumber === 2) {
         pq2.push(tempArray[i]);
+        console.log(tempArray[i]);
       }
     }
 
+    for (let i = 0; i < 4; i++) {
+      groupTwoPassed.push(pq2.pop());
+    }
     while (!pq2.isEmpty()) {
-      groupTwo.push(pq2.pop());
+      groupTwoFailed.push(pq2.pop());
     }
 
-    setGroupOneRanking(groupOne);
-    setGroupTwoRanking(groupTwo);
+    setGroupOneQualified(groupOnePassed);
+    setGroupOneNotQualified(groupOneFailed);
+    setGroupTwoQualified(groupTwoPassed);
+    setGroupTwoNotQualified(groupTwoFailed);
   };
 
   // on generate handler to generate the results
@@ -156,15 +165,37 @@ const MatchResults = () => {
             <div className="Results">
               <div className="Ranking">
                 <p>Group 1</p>
-                {groupOneRanking.map((element) => {
-                  return <p key={element.teamName}>{element.teamName}</p>;
+                {groupOneQualified.map((element) => {
+                  return (
+                    <p className="Qualified" key={element.teamName}>
+                      {element.teamName}
+                    </p>
+                  );
+                })}
+                {groupOneNotQualified.map((element) => {
+                  return (
+                    <p className="NotQualified" key={element.teamName}>
+                      {element.teamName}
+                    </p>
+                  );
                 })}
               </div>
 
               <div className="Ranking">
                 <p>Group 2</p>
-                {groupTwoRanking.map((element) => {
-                  return <p key={element.teamName}>{element.teamName}</p>;
+                {groupTwoQualified.map((element) => {
+                  return (
+                    <p className="Qualified" key={element.teamName}>
+                      {element.teamName}
+                    </p>
+                  );
+                })}
+                {groupTwoNotQualified.map((element) => {
+                  return (
+                    <p className="NotQualified" key={element.teamName}>
+                      {element.teamName}
+                    </p>
+                  );
                 })}
               </div>
             </div>

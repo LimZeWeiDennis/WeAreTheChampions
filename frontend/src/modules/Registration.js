@@ -12,7 +12,6 @@ const Registration = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [teamObjects, setTeamObjects] = useState([]);
   const [hasError, setHasError] = useState(false);
-  const localStorageKey = "team";
 
   // onChange handler for text field
   const onChangeHandler = (event) => {
@@ -31,7 +30,7 @@ const Registration = () => {
   }, []);
 
   // method to register teams in the current text input
-  const registerInput = (input) => {
+  const registerInput = async (input) => {
     const inputArray = input.split("\n"); // split the input string by new space, since string is from input textbox, no need to check if it is string
     const teamsArray = [];
     let teamNames = new Set( // Set to storet he current set of teamNames, to check for duplicates
@@ -80,7 +79,7 @@ const Registration = () => {
           groupNumber: groupNumber,
         };
         teamsArray.push(newTeamObject);
-        registerTeam(newTeamObject);
+        await registerTeam(newTeamObject);
       }
 
       //some function to store the team object;
