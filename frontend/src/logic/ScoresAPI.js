@@ -24,11 +24,23 @@ export const insertScore = async (scoresObject) => {
   }
 };
 
-const getTeamGoalsUri = `${scoresUri}/getScore`;
+const getTeamScoresUri = `${scoresUri}/getScore`;
 
 export const getTeamScores = async (teamNameObject) => {
   try {
-    let data = await axios.post(getTeamGoalsUri, teamNameObject);
+    let data = await axios.post(getTeamScoresUri, teamNameObject);
+    data = handleResponse(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const deleteTeamScoresUri = `${scoresUri}/delete`;
+
+export const deleteAllTeamScores = async () => {
+  try {
+    let data = await axios.post(deleteTeamScoresUri);
     data = handleResponse(data);
     return data;
   } catch (e) {
