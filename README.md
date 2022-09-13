@@ -22,11 +22,11 @@
 - Input the Team using the format provided by the instructions</br>
   Navigate the page using
   </br>
-  <img src="./Registration.png">
+  <img src="./assets/Registration.png">
 - Input each Match Results using the format provided by the instructions</br>
   </br>
-  <img src="./Record.png">
+  <img src="./assets/Record.png">
 - View the Match Results by clicking the "Generate Results" </br>
   Click on "Clear Data" to delete all records from the database
   </br>
-  <img src="./MatchResults.png">
+  <img src="./assets/MatchResults.png">
