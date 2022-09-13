@@ -172,9 +172,9 @@ const RecordScore = () => {
     }
 
     if (!isError) {
-      insertGoal(goalsArray);
-      insertScore(scoresArray);
-      insertAltScore(altScoresArray);
+      await insertGoal(goalsArray);
+      await insertScore(scoresArray);
+      await insertAltScore(altScoresArray);
     }
     setHasError(isError);
     setIsLoading(false);
