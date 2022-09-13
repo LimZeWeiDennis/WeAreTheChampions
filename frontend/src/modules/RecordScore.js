@@ -14,6 +14,7 @@ const RecordScore = () => {
   const [teamNames, setTeamNames] = useState(new Set());
   const [errorMessage, setErrorMessage] = useState("");
   const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadAllTeams = async () => {
@@ -31,49 +32,107 @@ const RecordScore = () => {
     setInputText(event.target.value);
   };
 
-  // To input goals into database;
-  const inputGoals = async (teams, goalList) => {
+  // To input goals into goalsArray;
+  const inputGoals = (teams, goalList, gArray) => {
     for (let i = 0; i < teams.length; i++) {
-      const newGoalObject = { teamName: teams[i], goals: goalList[i] };
-      await insertGoal(newGoalObject);
+      const currIdx = gArray.findIndex((team) => {
+        return team.teamName === teams[i];
+      });
+      if (currIdx === -1) {
+        const newGoalObject = { teamName: teams[i], goals: goalList[i] };
+        gArray.push(newGoalObject);
+      } else {
+        gArray[currIdx].goals += goalList[i];
+      }
     }
+
+    return gArray;
   };
 
-  // to handle logic and input scores and altScores into database
-  const inputScores = async (team1, team2, goals1, goals2) => {
+  // to handle logic and input scores into scoresArray
+  const inputScores = (team1, team2, goals1, goals2, scoresArray) => {
+    let team1Scores = 0;
+    let team2Scores = 0;
     if (goals1 > goals2) {
-      const newScoreObject = { teamName: team1, scores: 3 };
-      const newAltScoreObject = { teamName: team1, scores: 5 };
-      const newAltScoreObject2 = { teamName: team2, scores: 1 };
-
-      await insertScore(newScoreObject);
-      await insertAltScore(newAltScoreObject);
-      await insertAltScore(newAltScoreObject2);
+      team1Scores += 3;
     } else if (goals2 > goals1) {
-      const newScoreObject = { teamName: team2, scores: 3 };
-      const newAltScoreObject = { teamName: team2, scores: 5 };
-      const newAltScoreObject2 = { teamName: team1, scores: 1 };
-
-      await insertScore(newScoreObject);
-      await insertAltScore(newAltScoreObject);
-      await insertAltScore(newAltScoreObject2);
+      team2Scores += 3;
     } else {
-      const newScoreObject = { teamName: team1, scores: 1 };
-      const newScoreObject2 = { teamName: team2, scores: 1 };
-
-      const newAltScoreObject = { teamName: team1, scores: 3 };
-      const newAltScoreObject2 = { teamName: team2, scores: 3 };
-
-      await insertScore(newScoreObject);
-      await insertScore(newScoreObject2);
-      await insertAltScore(newAltScoreObject);
-      await insertAltScore(newAltScoreObject2);
+      team1Scores += 1;
+      team2Scores += 1;
     }
+
+    let currIdx = scoresArray.findIndex((team) => {
+      return team.teamName === team1;
+    });
+    if (currIdx === -1) {
+      const newScoresObject = { teamName: team1, scores: team1Scores };
+      scoresArray.push(newScoresObject);
+    } else {
+      scoresArray[currIdx].scores += team1Scores;
+    }
+
+    currIdx = scoresArray.findIndex((team) => {
+      return team.teamName === team2;
+    });
+    if (currIdx === -1) {
+      const newScoresObject = { teamName: team2, scores: team2Scores };
+      scoresArray.push(newScoresObject);
+    } else {
+      scoresArray[currIdx].scores += team2Scores;
+    }
+
+    return scoresArray;
+  };
+
+  // to handle logic and input altScores into altScoresArray
+  const inputAltScores = (team1, team2, goals1, goals2, altScoresArray) => {
+    let team1Scores = 0;
+    let team2Scores = 0;
+    if (goals1 > goals2) {
+      team1Scores += 5;
+      team2Scores += 1;
+    } else if (goals2 > goals1) {
+      team2Scores += 5;
+      team1Scores += 1;
+    } else {
+      team1Scores += 3;
+      team2Scores += 3;
+    }
+
+    let currIdx = altScoresArray.findIndex((team) => {
+      return team.teamName === team1;
+    });
+    if (currIdx === -1) {
+      const newScoresObject = { teamName: team1, scores: team1Scores };
+      altScoresArray.push(newScoresObject);
+    } else {
+      altScoresArray[currIdx].scores += team1Scores;
+    }
+
+    currIdx = altScoresArray.findIndex((team) => {
+      return team.teamName === team2;
+    });
+    if (currIdx === -1) {
+      const newScoresObject = { teamName: team2, scores: team2Scores };
+      altScoresArray.push(newScoresObject);
+    } else {
+      altScoresArray[currIdx].scores += team2Scores;
+    }
+
+    return altScoresArray;
   };
 
   // function to handle the input of goals, scores and alt scores into the database
   const handleScores = async (input) => {
+    input = input.trim();
+    setIsLoading(true);
     const scores = input.split("\n");
+
+    let goalsArray = [];
+    let scoresArray = [];
+    let altScoresArray = [];
+
     let isError = false;
 
     for (let i = 0; i < scores.length; i++) {
@@ -89,14 +148,36 @@ const RecordScore = () => {
       }
 
       if (!isError) {
-        await inputGoals(
+        console.log(firstTeam + "," + secondTeam + "," + firstTeamGoal);
+        goalsArray = inputGoals(
           [firstTeam, secondTeam],
-          [firstTeamGoal, secondTeamGoal]
+          [firstTeamGoal, secondTeamGoal],
+          goalsArray
         );
-        await inputScores(firstTeam, secondTeam, firstTeamGoal, secondTeamGoal);
+        scoresArray = inputScores(
+          firstTeam,
+          secondTeam,
+          firstTeamGoal,
+          secondTeamGoal,
+          scoresArray
+        );
+        altScoresArray = inputAltScores(
+          firstTeam,
+          secondTeam,
+          firstTeamGoal,
+          secondTeamGoal,
+          altScoresArray
+        );
       }
     }
+
+    if (!isError) {
+      insertGoal(goalsArray);
+      insertScore(scoresArray);
+      insertAltScore(altScoresArray);
+    }
     setHasError(isError);
+    setIsLoading(false);
   };
 
   // on submit handler for submit button
@@ -146,6 +227,7 @@ const RecordScore = () => {
         <Button
           className="Submit"
           variant="contained"
+          disabled={isLoading}
           onClick={onSubmitHandler}
         >
           {" "}
