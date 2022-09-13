@@ -20,7 +20,7 @@ const RecordScore = () => {
   useEffect(() => {
     const loadAllTeams = async () => {
       const data = await getAllTeams();
-      if (data.data.data) {
+      if (data) {
         setTeamNames(new Set(data.data.data.map((team) => team.teamName)));
       }
     };
