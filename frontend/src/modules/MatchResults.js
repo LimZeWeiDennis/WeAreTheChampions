@@ -4,10 +4,13 @@ import Button from "@mui/material/Button";
 import PriorityQueue from "../util/PriorityQueue.js";
 
 import "./Registration.css";
-import { getAllTeams } from "../logic/RegistrationAPI";
-import { getAllGoals, getTeamGoals } from "../logic/GoalsAPI.js";
-import { getAllScores, getTeamScores } from "../logic/ScoresAPI.js";
-import { getAllAltScores, getTeamAltScores } from "../logic/AltScoresAPI.js";
+import { getAllTeams, deleteAllTeams } from "../logic/RegistrationAPI";
+import { getAllGoals, deleteAllTeamGoals } from "../logic/GoalsAPI.js";
+import { getAllScores, deleteAllTeamScores } from "../logic/ScoresAPI.js";
+import {
+  getAllAltScores,
+  deleteAllTeamAltScores,
+} from "../logic/AltScoresAPI.js";
 
 const MatchResults = () => {
   const [teams, setTeams] = useState([]);
@@ -54,6 +57,7 @@ const MatchResults = () => {
     loadAllAltScores();
   }, []);
 
+  // Creates a temp array of team Objects that contains teamName, registrationDate, groupNumber, goals, scores and altScores.
   const loadFullTeamInfo = () => {
     const tempArray = [];
     for (let i = 0; i < teams.length; i++) {
@@ -140,13 +144,29 @@ const MatchResults = () => {
   };
 
   // on generate handler to generate the results
-  const onGenerateHandler = async () => {
+  const onGenerateHandler = () => {
     loadFullTeamInfo();
+  };
+
+  const reset = async () => {
+    await deleteAllTeamAltScores();
+    await deleteAllTeamGoals();
+    await deleteAllTeamScores();
+    await deleteAllTeams();
+
+    setTeams([]);
+    setGoals([]);
+    setScores([]);
+    setAltScores([]);
+    setGroupOneQualified([]);
+    setGroupOneNotQualified([]);
+    setGroupTwoQualified([]);
+    setGroupTwoNotQualified([]);
   };
 
   // on submit handler for submit button
   const onSubmitHandler = async () => {
-    // To create delete API calls for teams, goals, scores and altscores
+    reset();
   };
 
   return (
