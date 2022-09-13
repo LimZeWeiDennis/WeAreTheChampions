@@ -6,7 +6,7 @@ const insertScore = async (req, res, next) => {
   try {
     const content = req.body;
     const results = [];
-    for (let i = 0; i < req.body.length; i++) {
+    for (let i = 0; i < content.length; i++) {
       const currTeam = await Team.findOne({
         teamName: content[i].teamName,
       }).exec();

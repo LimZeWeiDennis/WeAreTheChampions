@@ -12,9 +12,9 @@ import MatchResults from "./modules/MatchResults.js";
 import soccerBG from "./assets/soccer.png";
 
 function App() {
-  const [value, setValue] = new useState("1");
-  const [hasTwelveTeams, setHasTwelveTeams] = new useState(true);
+  const [value, setValue] = useState("1");
 
+  // on change handler for tabs
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -42,8 +42,8 @@ function App() {
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={handleChange} aria-label="lab API tabs example">
               <Tab label="Registration" value="1" />
-              <Tab disabled={!hasTwelveTeams} label="Record Score" value="2" />
-              <Tab disabled={!hasTwelveTeams} label="Match Results" value="3" />
+              <Tab label="Record Score" value="2" />
+              <Tab label="Match Results" value="3" />
             </TabList>
           </Box>
           <TabPanel value="1">
