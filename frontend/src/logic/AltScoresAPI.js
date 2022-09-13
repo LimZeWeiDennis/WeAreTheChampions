@@ -35,3 +35,15 @@ export const getTeamAltScores = async (teamNameObject) => {
     console.error(e);
   }
 };
+
+const deleteTeamAltScoresUri = `${altScoresUri}/delete`;
+
+export const deleteAllTeamAltScores = async () => {
+  try {
+    let data = await axios.post(deleteTeamAltScoresUri);
+    data = handleResponse(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
