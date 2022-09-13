@@ -1,50 +1,63 @@
 .Submit {
-    width: 50vh;
-    height: 5vh;
+  width: 40vh;
+  height: 5vh;
 }
 
 .Buttons {
-    margin: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .Error-Message {
-    color: red;
-    font-size: larger;
+  color: red;
+  font-size: larger;
 }
 
 .Instructions {
-    display:flex;
-    flex-direction:column;
-    justify-content: center;
-    align-items: flex-start;
-    margin-bottom: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 2%;
+}
+
+.Ranking {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Results {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin: 5%;
 }
 
 .Text-Field {
-    width: 70vh;
+  width: 70vh;
 }
 
 .Team-Text {
-    display:flex;
-    flex-direction:row;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .Registration {
-    width: 100vh;
-    height: 80vh;
-    display:flex;
-    opacity: 0.8;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255,255,255, 0.8);
-    border-radius: 30px;
-    padding: 20px;
+  width: 100vh;
+  height: 80vh;
+  display: flex;
+  opacity: 0.8;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 20px;
 }
-
