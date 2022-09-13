@@ -23,3 +23,15 @@ export const registerTeam = async (teamObject) => {
     console.error(e);
   }
 };
+
+const deleteTeamUri = `${teamRegistrationUri}/delete`;
+
+export const deleteAllTeams = async () => {
+  try {
+    let data = await axios.post(deleteTeamUri);
+    data = handleResponse(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
