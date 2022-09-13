@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { CircularProgress } from "@mui/material";
 
 import "./Registration.css";
 import { getAllTeams } from "../logic/RegistrationAPI";
@@ -185,6 +186,22 @@ const RecordScore = () => {
     handleScores(inputText);
     setInputText("");
   };
+
+  const LoadingUI = () => {
+    return (
+      <div className="Registration">
+        <h1>Record the scores!</h1>
+        <div className="Instructions">
+          <p>Recording Scores ...</p>
+        </div>
+        <CircularProgress />
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   return (
     <div className="Registration">

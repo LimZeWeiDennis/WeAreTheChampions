@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { CircularProgress } from "@mui/material";
 import { isExists } from "date-fns";
 
 import "./Registration.css";
 import { getAllTeams, registerTeam } from "../logic/RegistrationAPI";
 
-const Registration = () => {
+const Registration = (props) => {
   const [inputText, setInputText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [teamObjects, setTeamObjects] = useState([]);
@@ -114,6 +115,22 @@ const Registration = () => {
     registerInput(inputText);
     setInputText("");
   };
+
+  const LoadingUI = () => {
+    return (
+      <div className="Registration">
+        <h1>Register Teams</h1>
+        <div className="Instructions">
+          <p> Registering Teams...</p>
+        </div>
+        <CircularProgress />
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   return (
     <div className="Registration">

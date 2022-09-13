@@ -21,33 +21,35 @@ const MatchResults = () => {
   const [groupOneNotQualified, setGroupOneNotQualified] = useState([]);
   const [groupTwoQualified, setGroupTwoQualified] = useState([]);
   const [groupTwoNotQualified, setGroupTwoNotQualified] = useState([]);
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // useEffect to load all the required inputs
   useEffect(() => {
     const loadAllTeams = async () => {
       const data = await getAllTeams();
-      if (data.data.data) {
+      if (data) {
         setTeams(data.data.data);
       }
     };
 
     const loadAllGoals = async () => {
       const data = await getAllGoals();
-      if (data.data.data) {
+      if (data) {
         setGoals(data.data.data);
       }
     };
 
     const loadAllScores = async () => {
       const data = await getAllScores();
-      if (data.data.data) {
+      if (data) {
         setScores(data.data.data);
       }
     };
 
     const loadAllAltScores = async () => {
       const data = await getAllAltScores();
-      if (data.data.data) {
+      if (data) {
         setAltScores(data.data.data);
       }
     };
@@ -60,6 +62,8 @@ const MatchResults = () => {
   // Creates a temp array of team Objects that contains teamName, registrationDate, groupNumber, goals, scores and altScores.
   const loadFullTeamInfo = () => {
     const tempArray = [];
+    let hasError = false;
+
     for (let i = 0; i < teams.length; i++) {
       let tempTeamObject = {
         teamName: teams[i].teamName,
@@ -79,13 +83,23 @@ const MatchResults = () => {
         return obj.teamId === teams[i]._id;
       });
 
-      tempTeamObject.altScores = altScore[0].scores;
-      tempTeamObject.goals = goal[0].goals;
-      tempTeamObject.scores = score[0].scores; // TODO: insert into registration scores of 0;
+      try {
+        tempTeamObject.altScores = altScore[0].scores;
+        tempTeamObject.goals = goal[0].goals;
+        tempTeamObject.scores = score[0].scores;
+      } catch (e) {
+        hasError = true;
+        setErrorMessage(
+          "Oops! Seems like there are still some matches ongoing!"
+        );
+      }
 
       tempArray.push(tempTeamObject);
     }
-    generateRanking(tempArray);
+    setIsError(true);
+    if (!hasError) {
+      generateRanking(tempArray);
+    }
   };
 
   // Team comparator for constructor of priorityqueue to rank the teams
@@ -229,6 +243,13 @@ const MatchResults = () => {
           </p>
         )}
       </div>
+      {isError ? (
+        <div>
+          <p>{errorMessage}</p>
+        </div>
+      ) : (
+        <div></div>
+      )}
 
       <div className="Buttons">
         <Button
@@ -242,7 +263,6 @@ const MatchResults = () => {
         </Button>
         <Button
           className="Submit"
-          disabled={teams.length !== 12}
           variant="contained"
           onClick={onSubmitHandler}
         >
