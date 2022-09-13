@@ -13,6 +13,7 @@ const Registration = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [teamObjects, setTeamObjects] = useState([]);
   const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // onChange handler for text field
   const onChangeHandler = (event) => {
@@ -23,7 +24,7 @@ const Registration = () => {
   useEffect(() => {
     const loadAllTeams = async () => {
       const data = await getAllTeams();
-      if (data.data) {
+      if (data && data.data) {
         setTeamObjects(data.data.data);
       }
     };
@@ -32,12 +33,17 @@ const Registration = () => {
 
   // method to register teams in the current text input
   const registerInput = async (input) => {
+    setIsLoading(true);
     input = input.trim();
     const inputArray = input.split("\n"); // split the input string by new space, since string is from input textbox, no need to check if it is string
+
     const teamsArray = [];
+    const scoresArray = [];
+
     let teamNames = new Set( // Set to storet he current set of teamNames, to check for duplicates
       teamObjects.map((teamObject) => teamObject.teamName)
     );
+
     let isErrorInput = false;
     // example input
     // teamA 02/12 1
@@ -94,15 +100,17 @@ const Registration = () => {
           scores: 0,
         };
         teamsArray.push(newTeamObject);
-        await registerTeam(newTeamObject);
-        await insertScore(newScoreObject); // this is to ensure that every team has a score in the end;
+        scoresArray.push(newScoreObject); // this is to ensure that every team has a score in the end;
       }
-
-      //some function to store the team object;
     }
     setHasError(isErrorInput);
-    const newTeamObjects = [...teamObjects, ...teamsArray];
-    setTeamObjects(newTeamObjects);
+    if (!isErrorInput) {
+      await registerTeam(teamsArray);
+      await insertScore(scoresArray);
+      const newTeamObjects = [...teamObjects, ...teamsArray];
+      setTeamObjects(newTeamObjects);
+    }
+    setIsLoading(false);
   };
 
   // submit handler for the submit button
@@ -147,6 +155,7 @@ const Registration = () => {
       <div className="Buttons">
         <Button
           className="Submit"
+          disabled={isLoading}
           variant="contained"
           onClick={onSubmitHandler}
         >
